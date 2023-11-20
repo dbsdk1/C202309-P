@@ -17,10 +17,29 @@ int main() {
     scanf_s("%d", &choice);
 
     if (choice == 1) {
+      int type1 = 0, type2 = 0, type3 = 0;
       printf("피부타입 진단을 시작할게요 :)\n");
-      // if문 사용해서 이지선다
+      printf("피부타입은 크게 지성, 복합성(중성), 건성으로 나누어져요!\n");
+      printf("다음 보기들을 보고 자신의 피부에 맞는 것을 고르면 됩니다.\n");
+      printf("");
+      scanf_s("%d", &type1);
+
     } else if (choice == 2) {
     } else if (choice == 3) {
+      int num = 0;
+      printf(
+          "1. 피부 일기 쓰기\n2. 피부 일기 수정\n3. 피부 일기 삭제\n4. 피부 "
+          "일기 보기");
+      scanf_s("%d", &num);
+      if (num == 1) {
+        int month = 0;
+        printf("월을 입력하세요.(1~12)\n");
+        scanf_s("%d", &month);
+        printf("일을 입력하세요.\n");
+      }
+      if (num == 2) {
+        // printf("날짜수정할건지 일기내용을수정할건지 고르라고 하기");
+      }
     } else if (choice == 4) {
     } else if (choice == 5) {
       int num = 0;
@@ -42,7 +61,7 @@ int main() {
             "됩니다! 간단하게 설명하면 [스킨(토너) - 앰플 - 로션 or 수분크림 - "
             "스팟연고] 순서로 바르면 됩니다. ");
         printf(
-            "바를 때는 빢빡 힘줘서 바르면 안되고 살살 발라야 자극이 덜해서 "
+            "바를 때는 빡빡 힘줘서 바르면 안되고 살살 발라야 자극이 덜해서 "
             "트러블을 막을 수 있습니다.\n");
       } else if (num == 3) {
         printf(
