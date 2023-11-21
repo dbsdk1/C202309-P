@@ -1,4 +1,6 @@
 #include <stdio.h>
+#define yeol 50
+#define bunho 20
 
 int main() {
   printf("피부관리 프로그램 ver1.0 \n");
@@ -25,22 +27,42 @@ int main() {
       scanf_s("%d", &type1);
 
     } else if (choice == 2) {
+      int num = 0;
+      char save[bunho][yeol] = {" "};
+      // 화장품 저장소 2차원배열 만들어서 그 안에 화장품 이름 저장하기, 목록은
+      // 바로 출력하기
+      /* for (int i = 0; i < bunho; i++) {
+        printf("%d. %s\n", i+1, save[i], (int)sizeof(save));  여기 경고뜸!!
+      그리고 저장안되면(배열 빈칸이면) 출력안되게 해야한다.
+      } */
+
+      printf("1. 화장품 추가\n2. 나가기\n");
+      scanf_s("%d", &num);
     } else if (choice == 3) {
       int num = 0;
       printf(
           "1. 피부 일기 쓰기\n2. 피부 일기 수정\n3. 피부 일기 삭제\n4. 피부 "
-          "일기 보기");
+          "일기 보기\n");
       scanf_s("%d", &num);
       if (num == 1) {
         int month = 0;
+        int day = 0;
         printf("월을 입력하세요.(1~12)\n");
         scanf_s("%d", &month);
-        printf("일을 입력하세요.\n");
-      }
-      if (num == 2) {
+        printf("일을 입력하세요.(1~31)\n");
+        scanf_s("%d", &day);  // 사용자가 1월1일 이렇게 바로 입력할 순
+                              // 없을까,,,,, 안되면 이런형식으로 하자
+        // 할 일: 배열에 글 저장
+      } else if (num == 2) {
         // printf("날짜수정할건지 일기내용을수정할건지 고르라고 하기");
+      } else if (num == 3) {
+      } else {
       }
     } else if (choice == 4) {
+      printf(
+          "올리브영 링크입니다! (링크 바로가기는 추후 업데이트 예정입니다) "
+          "복사(ctrl+c) 후 주소 창에 붙여넣기(ctrl+v) 하세요\n");
+      printf("www.oliveyoung.co.kr\n");
     } else if (choice == 5) {
       int num = 0;
       printf("1) 여드름에 좋은 화장품 성분들\n");
