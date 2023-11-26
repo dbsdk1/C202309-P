@@ -1,9 +1,11 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-#define yeol 50
+#include <string.h>
+#define yeol 100
 #define bunho 20
 
+char save[bunho][yeol] = {""};
+int count = 0;
 int main() {
   printf("피부관리 프로그램 ver1.0 \n");
 
@@ -26,31 +28,41 @@ int main() {
       printf("피부타입은 크게 지성, 복합성(중성), 건성으로 나누어져요!\n");
       printf("다음 보기들을 보고 자신의 피부에 맞는 것을 고르면 됩니다.\n");
       printf("세수하고 나오면 얼굴이 건조하고 ");
-      scanf_s("%d", &type1);  // 이걸 뭐로구현해야지..? 동적메모리? 한 5개 정도 질문지 만들고 1번이..? sum으로 해야하나 아하 그래야할듯;.? 함수만들어버리기?
-      //배열 칸에 1, 2 각각 저장 후 for문으로 
+      scanf_s("%d", &type1);  // 이걸 뭐로구현해야지..? 동적메모리? 한 5개 정도
+                              // 질문지 만들고 1번이..? sum으로 해야하나 아하
+                              // 그래야할듯;.? 함수만들어버리기?
+      // 할 것: 배열 칸에 1, 2 각각 저장 후 for문으로 하고 더하는 것 최종적
+      // 함수로 만들기
     } else if (choice == 2) {
       int num = 0;
-     
-      char save[bunho][yeol] = {""};  // 동적할당 ㄱㄱㄱㄱ
+
+  // 동적할당 ㄱㄱㄱㄱ
       // 화장품 저장소 2차원배열 만들어서 그 안에 화장품 이름 저장하기, 목록은
       // 바로 출력하기
+      printf("[화장품 목록]\n");
       for (int i = 0; i < bunho; i++) {
         if (strlen(save[i]) >= 1) {
           printf("%d. %s\n", i + 1, save[i]);
         }
-        
-      //그리고 저장안되면(배열 빈칸이면) 출력안되게 해야한다. -> 문자열길이함수사용!
-      } 
+      }
+      printf("-------------------\n");
+
 
       printf("1. 화장품 추가\n2. 나가기\n");
       scanf_s("%d", &num);
       if (num == 1) {
-        printf("");
+        printf("화장품 이름을 입력하세요.(띄어쓰기 없이 입력): \n");
+        getchar();
+        scanf_s("%s", save[count], (int)sizeof(save[count]));
+        getchar();
+        count++;
+
+      } else if (num == 2) {
       }
     } else if (choice == 3) {
       int num = 0;
       printf(
-          "1. 피부 일기 쓰기\n2. 피부 일기 수정\n3. 피부 일기 삭제\n4. 피부 "
+          "1. 피부 일기 쓰기\n2. 피부 일기 수정\n3. 피부 "
           "일기 보기\n");
       scanf_s("%d", &num);
       if (num == 1) {
@@ -61,13 +73,11 @@ int main() {
         printf("일을 입력하세요.(1~31)\n");
         scanf_s("%d", &day);  // 사용자가 1월1일 이렇게 바로 입력할 순
                               // 없을까,,,,, 안되면 이런형식으로 하자
-        // 할 일: 배열에 글 저장
+        // 파일입출력 ~
       } else if (num == 2) {
         // printf("날짜수정할건지 일기내용을수정할건지 고르라고 하기");
+
       } else if (num == 3) {
-        printf("삭제할 일기의 번호를 입력하세요.");
-      } else if(num==4) {
-          // 배열 for문으로 불러오기
       }
     } else if (choice == 4) {
       printf(
