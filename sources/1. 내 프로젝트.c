@@ -5,6 +5,7 @@
 #define bunho 20
 
 char save[bunho][yeol] = {""};
+int type[bunho];
 int count = 0;
 int main() {
   printf("피부관리 프로그램 ver1.0 \n");
@@ -23,20 +24,30 @@ int main() {
     scanf_s("%d", &choice);
 
     if (choice == 1) {
-      int type1 = 0, type2 = 0, type3 = 0;
+      int sum = 0;
       printf("피부타입 진단을 시작할게요 :)\n");
       printf("피부타입은 크게 지성, 복합성(중성), 건성으로 나누어져요!\n");
       printf("다음 보기들을 보고 자신의 피부에 맞는 것을 고르면 됩니다.\n");
-      printf("세수하고 나오면 얼굴이 건조하고 ");
-      scanf_s("%d", &type1);  // 이걸 뭐로구현해야지..? 동적메모리? 한 5개 정도
-                              // 질문지 만들고 1번이..? sum으로 해야하나 아하
-                              // 그래야할듯;.? 함수만들어버리기?
+      printf("세수하고 나오면 얼굴이 건조하고 \n");
+      scanf_s("%d", &type[0]);
+      printf("1.~ 2.~\n");
+      scanf_s("%d", &type[1]);
+      for (int i = 0; i < 5; i++) {
+        sum += *(type + i);
+      }
+
+      printf("%d\n", sum);
+      printf("피부 타입 결과는 ~입니다!\n");  // 테스트용 if문 추가하기
+
+      // 동적메모리? 한 5개 정도
+      // 질문지 만들고 1번이..? sum으로 해야하나 아하
+      // 함수만들어버리기?
       // 할 것: 배열 칸에 1, 2 각각 저장 후 for문으로 하고 더하는 것 최종적
       // 함수로 만들기
     } else if (choice == 2) {
       int num = 0;
 
-  // 동적할당 ㄱㄱㄱㄱ
+      // 동적할당 ㄱㄱㄱㄱ
       // 화장품 저장소 2차원배열 만들어서 그 안에 화장품 이름 저장하기, 목록은
       // 바로 출력하기
       printf("[화장품 목록]\n");
@@ -46,7 +57,6 @@ int main() {
         }
       }
       printf("-------------------\n");
-
 
       printf("1. 화장품 추가\n2. 나가기\n");
       scanf_s("%d", &num);
