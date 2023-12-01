@@ -7,6 +7,15 @@
 char save[bunho][yeol] = {""};
 int type[bunho];
 int count = 0;
+
+struct HwaInfo {
+  char* brandname;
+  char* name;
+};
+
+void ScanfHwaInfo(struct HwaInfo* hwa);
+void displayHwaInfo(const struct HwaInfo* hwa, int count);
+
 int main() {
   printf("피부관리 프로그램 ver1.0 \n");
 
@@ -46,26 +55,20 @@ int main() {
       // 함수로 만들기
     } else if (choice == 2) {
       int num = 0;
-
-      // 동적할당 ㄱㄱㄱㄱ
-      // 화장품 저장소 2차원배열 만들어서 그 안에 화장품 이름 저장하기, 목록은
-      // 바로 출력하기
-      printf("[화장품 목록]\n");
-      for (int i = 0; i < bunho; i++) {
-        if (strlen(save[i]) >= 1) {
-          printf("%d. %s\n", i + 1, save[i]);
-        }
-      }
+      struct HwaInfo hwa_save[bunho];  // 구조체에 대한 정의하기
+     
+      displayHwaInfo(hwa_save, count);
       printf("-------------------\n");
 
       printf("1. 화장품 추가\n2. 나가기\n");
       scanf_s("%d", &num);
       if (num == 1) {
-        printf("화장품 이름을 입력하세요.(띄어쓰기 없이 입력): \n");
-        getchar();
-        scanf_s("%s", save[count], (int)sizeof(save[count]));
-        getchar();
-        count++;
+        if (count < bunho) {
+          ScanfHwaInfo(&hwa_save[count]);
+          count++;
+        } else {
+          printf("화장품 저장소가 꽉 찼어요.\n");
+        }
 
       } else if (num == 2) {
       }
@@ -81,11 +84,12 @@ int main() {
         printf("월을 입력하세요.(1~12)\n");
         scanf_s("%d", &month);
         printf("일을 입력하세요.(1~31)\n");
-        scanf_s("%d", &day);  // 사용자가 1월1일 이렇게 바로 입력할 순
-                              // 없을까,,,,, 안되면 이런형식으로 하자
+        scanf_s("%d", &day);
         // 파일입출력 ~
       } else if (num == 2) {
-        // printf("날짜수정할건지 일기내용을수정할건지 고르라고 하기");
+        int num = 0;
+        printf("1. 날짜수정\n2. 일기내용수정\n");
+        scanf_s("%d", &num);
 
       } else if (num == 3) {
       }
@@ -135,5 +139,28 @@ int main() {
     } else {
       printf("잘못된 입력입니다. 1~6번 사이의 번호를 입력해주세요\n");
     }
+
+  }
+
+}
+
+void ScanfHwaInfo(struct HwaInfo* hwa) {
+  printf("화장품 브랜드를 입력하세요.(띄어쓰기 없이 입력): \n");
+  char temp[100];
+  scanf_s("%s", temp, (int)sizeof(temp));
+  hwa->brandname = (char*)malloc((strlen(temp) + 1) * sizeof(char));
+  strcpy_s(hwa->brandname, strlen(temp) + 1, temp);
+
+  printf("화장품 이름을 입력하세요.(띄어쓰기 없이 입력): \n");
+  scanf_s("%s", temp, (int)sizeof(temp));
+  hwa->name = (char*)malloc((strlen(temp) + 1) * sizeof(char));
+  strcpy_s(hwa->name, strlen(temp) + 1, temp);
+}
+
+void displayHwaInfo(const struct HwaInfo* hwa, int count) {
+  printf("[화장품 목록]\n");
+  for (int i = 0; i < count; i++) {
+    printf("%d. %s | %s\n", i + 1, hwa[i].brandname, hwa[i].name);
+    // printf("%s"); 한줄평 출력
   }
 }
