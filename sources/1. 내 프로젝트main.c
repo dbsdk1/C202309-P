@@ -5,23 +5,33 @@
 #define bunho 20
 
 char save[bunho][yeol] = {""};
-int type[bunho];
+int type[5];
 int count = 0;
 
 struct HwaInfo {
   char* brandname;
   char* name;
+  float star;
+  char* write;
 };
 
-void ScanfHwaInfo(struct HwaInfo* hwa);
+void addHwaInfo(struct HwaInfo* hwa);
 void displayHwaInfo(const struct HwaInfo* hwa, int count);
 
 int main() {
+  char one;
   printf("피부관리 프로그램 ver1.0 \n");
+  printf("초기 설정 단계입니다!\n");
+  printf(
+      "여드름약을 먹거나 바르고 계신가요? 맞다면 y를, 틀리면 n을 입력해주세요. "
+      "이 정보는 약 알리미 기능에 사용됩니다!\n");  // 함수화 시키고 설정6번으로
+                                                    // 추가시켜서 함수로
+                                                    // 만들어서 불러오기 ㄱ
+  scanf_s("%c", &one, 1);
 
   while (1) {
     int choice = 0;
-    // char med[20] = "맞습니다";
+    // char med[20] = "맞습니다";  //동적 고려
     printf("--------------------------\n");
     printf("번호를 선택해주세요!\n");
     printf(
@@ -36,41 +46,66 @@ int main() {
       int sum = 0;
       printf("피부타입 진단을 시작할게요 :)\n");
       printf("피부타입은 크게 지성, 복합성(중성), 건성으로 나누어져요!\n");
-      printf("다음 보기들을 보고 자신의 피부에 맞는 것을 고르면 됩니다.\n");
-      printf("세수하고 나오면 얼굴이 건조하고 \n");
+      printf("다음 보기들을 보고 자신의 피부와 가까운 것을 고르면 됩니다.\n");
+      printf(
+          "1. 세수하고 나와서 아무것도 안바른 상태로 시간이 지나도 건조하지가 "
+          "않다. 2. 세수하고 아무것도 안바른다면 얼굴이 건조하고 당기는 "
+          "편이다.\n");
       scanf_s("%d", &type[0]);
-      printf("1.~ 2.~\n");
+      printf(
+          "1. 오후가 되면 얼굴에 기름이 뜨고 반짝거린다. 2. 오후가 되어도 "
+          "아침과 피부상태가 똑거나 기름이 거의 없다.\n");
       scanf_s("%d", &type[1]);
+      printf(
+          "1. 가을겨울에도 피부의 건조함을 느끼지 못한다. 2. 가을겨울은 피부가 "
+          "다른 계절보다 건조해진다.\n");
+      scanf_s("%d", &type[2]);
+      printf(
+          "1. 기름종이를 사용했을 때 기름이 잔뜩 흡수된다. 2. 기름종이를 "
+          "썼는데 "
+          "기름종이가 뽀송하다. (기름종이가 없다면 깨끗한 손으로 얼굴을 "
+          "만져보고 묻은 양을 확인해보세요)\n");
+      scanf_s("%d", &type[3]);
+      printf("1. 여드름이 많이 나있다. 2. 여드름이 없는 편이다.\n");
+      scanf_s("%d", &type[4]);
+
       for (int i = 0; i < 5; i++) {
         sum += *(type + i);
       }
+      if (sum <= 6) {
+        printf("피부 타입 진단 결과는 지성입니다!\n");
+        printf(
+            "지성은 일반적으로 유분(기름)이 많은 피부입니다. 꾸덕하거나 잘 "
+            "흡수되지 않는 무거운 기초화장품을 사용하면 여드름이 더 심해지니 "
+            "주의하세요!\n");
+      } else if (sum <= 8) {
+        printf("피부 타입 진단 결과는 중성(복합성)입니다!\n");
+        printf("~~\n");
+      } else {
+        printf("피부 타입 진단 결과는 건성입니다!\n");
+        printf("건성은 ~\n");
+      }  // 함수로 만들기
 
-      printf("%d\n", sum);
-      printf("피부 타입 결과는 ~입니다!\n");  // 테스트용 if문 추가하기
-
-      // 동적메모리? 한 5개 정도
-      // 질문지 만들고 1번이..? sum으로 해야하나 아하
-      // 함수만들어버리기?
-      // 할 것: 배열 칸에 1, 2 각각 저장 후 for문으로 하고 더하는 것 최종적
-      // 함수로 만들기
     } else if (choice == 2) {
       int num = 0;
-      struct HwaInfo hwa_save[bunho];  // 구조체에 대한 정의하기
-     
+      struct HwaInfo
+          hwa_save[bunho];  // 구조체에 대한 정의하기 (브랜드랑 이름 저장)
+
       displayHwaInfo(hwa_save, count);
       printf("-------------------\n");
 
-      printf("1. 화장품 추가\n2. 나가기\n");
+      printf("1. 화장품 추가\n2. 화장품 수정\n3. 나가기\n");
       scanf_s("%d", &num);
       if (num == 1) {
         if (count < bunho) {
-          ScanfHwaInfo(&hwa_save[count]);
+          addHwaInfo(&hwa_save[count]);  // 포인터
           count++;
         } else {
-          printf("화장품 저장소가 꽉 찼어요.\n");
+          printf("화장품 저장소가 꽉 찼어요. (최대 20개까지 저장 가능)\n");
         }
 
       } else if (num == 2) {
+      } else if (num == 3) {
       }
     } else if (choice == 3) {
       int num = 0;
@@ -139,28 +174,33 @@ int main() {
     } else {
       printf("잘못된 입력입니다. 1~6번 사이의 번호를 입력해주세요\n");
     }
-
   }
-
 }
 
-void ScanfHwaInfo(struct HwaInfo* hwa) {
-  printf("화장품 브랜드를 입력하세요.(띄어쓰기 없이 입력): \n");
+void addHwaInfo(struct HwaInfo* hwa) {
+  printf("화장품 브랜드를 입력하세요.(띄어쓰기 없이 입력): ");
   char temp[100];
   scanf_s("%s", temp, (int)sizeof(temp));
   hwa->brandname = (char*)malloc((strlen(temp) + 1) * sizeof(char));
   strcpy_s(hwa->brandname, strlen(temp) + 1, temp);
 
-  printf("화장품 이름을 입력하세요.(띄어쓰기 없이 입력): \n");
+  printf("화장품 이름을 입력하세요.(띄어쓰기 없이 입력): ");
   scanf_s("%s", temp, (int)sizeof(temp));
   hwa->name = (char*)malloc((strlen(temp) + 1) * sizeof(char));
   strcpy_s(hwa->name, strlen(temp) + 1, temp);
+
+  printf("별점을 입력하세요(5점 만점): ");
+  scanf_s("%f", &hwa->star);
+
+  printf("한줄평을 입력하세요: ");
 }
 
 void displayHwaInfo(const struct HwaInfo* hwa, int count) {
   printf("[화장품 목록]\n");
   for (int i = 0; i < count; i++) {
-    printf("%d. %s | %s\n", i + 1, hwa[i].brandname, hwa[i].name);
+    printf("%d. %s | %s (%.1f/5)\n", i + 1, hwa[i].brandname, hwa[i].name,
+           hwa[i].star);
     // printf("%s"); 한줄평 출력
   }
 }
+// 할일 동적메모리 free
