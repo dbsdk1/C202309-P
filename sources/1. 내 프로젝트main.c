@@ -5,21 +5,25 @@
 #define bunho 20
 #define MAX 10000
 
+char save[bunho][yeol] = {""};
 int type[5];
 int count = 0;
-char line[MAX];
-char content[MAX] = "";
+char line[MAX];          // 일기용
+char content[MAX] = "";  // 일기용
 int check = 1;
 
 struct HwaInfo {
   char* brandname;
   char* name;
   float star;
-  char* write;
+  // char* write;
 };
 
-void addHwaInfo(struct HwaInfo* hwa);
-void displayHwaInfo(const struct HwaInfo* hwa, int count);
+struct HwaInfo
+    hwa_save[bunho];  // 구조체에 대한 정의하기 (브랜드랑 이름 저장) 구조체 변수
+void AddHwaInfo(struct HwaInfo* hwa);
+void DisplayHwaInfo(const struct HwaInfo* hwa, int count);
+void Freemalloc(struct HwaInfo* hwa, int count);
 
 int errordetect(int user_num, int limit_num) {
   if (user_num > limit_num || user_num <= 0) {
@@ -51,7 +55,7 @@ int main() {
     printf(
         "1. 피부타입 진단하기\n2. 나의 화장품 서랍\n3. 오늘의 피부 일기\n4. "
         "올리브영 바로가기\n5. 여드름 관련 정보 모음zip\n");
-    printf("6. 설정\n.7. 프로그램 종료\n");
+    printf("6. 설정\n7. 프로그램 종료\n");
     /*printf("오늘(날짜~)은 약 먹는 날이 %s\n", med;*/
     printf("--------------------------\n");
     scanf_s("%d", &choice);
@@ -122,23 +126,25 @@ int main() {
 
     } else if (choice == 2) {
       int num = 0;
-      struct HwaInfo
-          hwa_save[bunho];  // 구조체에 대한 정의하기 (브랜드랑 이름 저장)
 
-      displayHwaInfo(hwa_save, count);
+      DisplayHwaInfo(hwa_save, count);
       printf("-------------------\n");
 
       printf("1. 화장품 추가\n2. 화장품 수정\n3. 나가기\n");
       scanf_s("%d", &num);
       if (num == 1) {
         if (count < bunho) {
-          addHwaInfo(&hwa_save[count]);  // 포인터
+          AddHwaInfo(&hwa_save[count]);  // 포인터
           count++;
         } else {
           printf("화장품 저장소가 꽉 찼어요. (최대 20개까지 저장 가능)\n");
         }
 
       } else if (num == 2) {
+        int sujeong = 0;
+        printf("수정할 화장품 리스트 번호를 입력하세요.");
+        scanf_s("%d", &sujeong);
+
       } else if (num == 3) {
       }
     } else if (choice == 3) {
@@ -160,15 +166,17 @@ int main() {
         printf("월을 입력하세요.(1~12)\n");
         scanf_s("%d", &month);
         printf("일을 입력하세요.(1~31)\n");
-        scanf_s("%d", &day);
+        scanf_s("%d",
+                &day);  // 그냥 printf("오늘 날짜를 입력하세요:") 도 고려하기
         printf("%d월 %d일", month, day);
-        fprintf(file, "%d월 %d일", month, day);
+        fprintf(file, "%d월 %d일 ", month, day);
         printf("일기 입력(작성이 완료되면 나가기를 입력하세요): ");
         while (1) {
           scanf_s("%[^\n]", content, (int)sizeof(content));
           getchar();
 
-          if (strcmp(content, "나가기") == 0) {  // 문자열 비교 같으면 0반환하는거임
+          if (strcmp(content, "나가기") ==
+              0) {  // 문자열 비교 같으면 0반환하는거임
             printf("일기가 저장되었습니다.\n");
             break;
           }
@@ -182,9 +190,20 @@ int main() {
         printf("1. 날짜수정\n2. 일기내용수정\n");
         scanf_s("%d", &num);
         if (num == 1) {
+          printf("잘못 쓴 날짜를 입력하세요.");
+          // scanf_s("")
         } else if (num == 2) {
         }
       } else if (num == 3) {
+        char temp[MAX];
+        while (1) {
+          char* result = fgets(temp, MAX, file);
+          if (result == NULL) {
+            break;
+          }
+          printf("%s", temp);
+        }
+        fclose(file);
       }
     } else if (choice == 4) {
       printf(
@@ -227,8 +246,10 @@ int main() {
                                                                        // ㄱ
       }
     } else if (choice == 6) {
+      // 설정(약 먹는거)
     } else if (choice == 7) {
       printf("프로그램을 종료합니다.\n");
+      Freemalloc(hwa_save, count);
       return;
     } else {
       printf("잘못된 입력입니다. 1~7번 사이의 번호를 입력해주세요\n");
@@ -236,7 +257,7 @@ int main() {
   }
 }
 
-void addHwaInfo(struct HwaInfo* hwa) {
+void AddHwaInfo(struct HwaInfo* hwa) {
   printf("화장품 브랜드를 입력하세요.(띄어쓰기 없이 입력): ");
   char temp[100];
   scanf_s("%s", temp, (int)sizeof(temp));
@@ -251,16 +272,22 @@ void addHwaInfo(struct HwaInfo* hwa) {
   printf("별점을 입력하세요(5점 만점): ");
   scanf_s("%f", &hwa->star);
 
-  printf("한줄평을 입력하세요: ");
-
+  // printf("한줄평을 입력하세요: ");
 }
 
-void displayHwaInfo(const struct HwaInfo* hwa, int count) {
+void DisplayHwaInfo(const struct HwaInfo* hwa, int count) {
   printf("[화장품 목록]\n");
   for (int i = 0; i < count; i++) {
     printf("%d. %s | %s (%.1f/5)\n", i + 1, hwa[i].brandname, hwa[i].name,
            hwa[i].star);
-    printf("%s\n", hwa[i].write);  // 한줄평 출력
+    // printf("%s\n", hwa[i].write);  // 한줄평 출력
   }
 }
-// 할일 동적메모리 free
+
+void Freemalloc(struct HwaInfo* hwa, int count) {
+  for (int i = 0; i < count; i++) {
+    free(hwa[i].brandname);
+    free(hwa[i].name);
+  }
+}
+// 할 일: 파일 3개 이상 만들기!!!!!!!! 함수화 시키기
