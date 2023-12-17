@@ -16,13 +16,14 @@ struct HwaInfo {
   char* brandname;
   char* name;
   float star;
-  // char* write;
+  char* write;
 };
 
 struct HwaInfo
     hwa_save[bunho];  // 구조체에 대한 정의하기 (브랜드랑 이름 저장) 구조체 변수
 void AddHwaInfo(struct HwaInfo* hwa);
 void DisplayHwaInfo(const struct HwaInfo* hwa, int count);
+void ChangeHwaInfo(struct HwaInfo* hwa);
 void Freemalloc(struct HwaInfo* hwa, int count);
 
 int errordetect(int user_num, int limit_num) {
@@ -142,8 +143,14 @@ int main() {
 
       } else if (num == 2) {
         int sujeong = 0;
-        printf("수정할 화장품 리스트 번호를 입력하세요.");
+        printf("수정할 화장품 번호를 입력하세요.");
         scanf_s("%d", &sujeong);
+        if (sujeong <= count) {
+          ChangeHwaInfo(&hwa_save[count]);
+        } else {
+          printf("수정할 화장품 번호가 잘못되었습니다.");
+        }
+
 
       } else if (num == 3) {
       }
@@ -259,7 +266,7 @@ int main() {
 
 void AddHwaInfo(struct HwaInfo* hwa) {
   printf("화장품 브랜드를 입력하세요.(띄어쓰기 없이 입력): ");
-  char temp[100];
+  char temp[300];
   scanf_s("%s", temp, (int)sizeof(temp));
   hwa->brandname = (char*)malloc((strlen(temp) + 1) * sizeof(char));
   strcpy_s(hwa->brandname, strlen(temp) + 1, temp);
@@ -272,7 +279,10 @@ void AddHwaInfo(struct HwaInfo* hwa) {
   printf("별점을 입력하세요(5점 만점): ");
   scanf_s("%f", &hwa->star);
 
-  // printf("한줄평을 입력하세요: ");
+  printf("한줄평을 입력하세요: ");
+  scanf_s("%s", temp, (int)sizeof(temp));
+  hwa->write = (char*)malloc((strlen(temp) + 1) * sizeof(char));
+  strcpy_s(hwa->write, strlen(temp) + 1, temp);
 }
 
 void DisplayHwaInfo(const struct HwaInfo* hwa, int count) {
@@ -280,14 +290,22 @@ void DisplayHwaInfo(const struct HwaInfo* hwa, int count) {
   for (int i = 0; i < count; i++) {
     printf("%d. %s | %s (%.1f/5)\n", i + 1, hwa[i].brandname, hwa[i].name,
            hwa[i].star);
-    // printf("%s\n", hwa[i].write);  // 한줄평 출력
+    printf("%s\n", hwa[i].write);  // 한줄평 출력
   }
+}
+void ChangeHwaInfo(struct HwaInfo* hwa)
+{
+
+
+
+
 }
 
 void Freemalloc(struct HwaInfo* hwa, int count) {
   for (int i = 0; i < count; i++) {
     free(hwa[i].brandname);
     free(hwa[i].name);
+    free(hwa[i].write);
   }
 }
 // 할 일: 파일 3개 이상 만들기!!!!!!!! 함수화 시키기
