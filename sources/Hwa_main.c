@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #define yeol 100
-#define bunho 20
+#define bunho 30
 #define MAX 10000
 
 char save[bunho][yeol] = {""};
@@ -11,6 +11,9 @@ int count = 0;
 char line[MAX];          // 일기용
 char content[MAX] = "";  // 일기용
 int check = 1;
+int MedCheck=0;
+int month, day;
+
 
 struct HwaInfo {
   char* brandname;
@@ -25,6 +28,9 @@ void AddHwaInfo(struct HwaInfo* hwa);
 void DisplayHwaInfo(const struct HwaInfo* hwa, int count);
 void ChangeHwaInfo(struct HwaInfo* hwa);
 void Freemalloc(struct HwaInfo* hwa, int count);
+void SubHwaInfo(struct HwaInfo* hwa, int count, int delete);
+int MedCalculator();
+
 
 int errordetect(int user_num, int limit_num) {
   if (user_num > limit_num || user_num <= 0) {
@@ -38,26 +44,36 @@ int errordetect(int user_num, int limit_num) {
 }
 
 int main() {
-  char one;
+ 
+  char* fileName = "./hwa_diary.txt";  // 일기 저장 txt
+  FILE* file;
   printf("피부관리 프로그램 ver1.0 \n");
   printf("초기 설정 단계입니다!\n");
-  printf(
-      "여드름약을 먹거나 바르고 계신가요? 맞다면 y를, 틀리면 n을 입력해주세요. "
-      "이 정보는 약 알리미 기능에 사용됩니다!\n");  // 함수화 시키고 설정6번으로
-                                                    // 추가시켜서 함수로
-                                                    // 만들어서 불러오기 ㄱ
-  scanf_s("%c", &one, 1);
-
+  int MedCheck = MedCalculator();
+  
   while (1) {
     int choice = 0;
-    // char med[20] = "맞습니다";  //동적 고려
+
     printf("--------------------------\n");
     printf("번호를 선택해주세요!\n");
     printf(
         "1. 피부타입 진단하기\n2. 나의 화장품 서랍\n3. 오늘의 피부 일기\n4. "
         "올리브영 바로가기\n5. 여드름 관련 정보 모음zip\n");
-    printf("6. 설정\n7. 프로그램 종료\n");
-    /*printf("오늘(날짜~)은 약 먹는 날이 %s\n", med;*/
+    printf("6. 약 설정\n");
+    if (MedCheck == 2) {
+      printf("7. eat\n8. 프로그램 종료\n");
+    } else {
+      printf("7. 프로그램 종료\n");
+    }
+    if (MedCheck == 1) {
+      printf("*오늘은 약 먹는 날이 맞습니다*\n");
+    } else if (MedCheck == 2) {
+      
+        
+
+      printf("*약을 먹어야 하는 다음 날짜는 %d월 %d일입니다.*\n", month, day);
+    }
+
     printf("--------------------------\n");
     scanf_s("%d", &choice);
 
@@ -116,7 +132,9 @@ int main() {
       } else if (sum <= 8) {
         printf("피부 타입 진단 결과는 중성(복합성)입니다!\n");
         printf(
-            "중성은 기름이 너무 많이 나오지도, 너무 적지도 않은 피부입니다.\n");
+            "중성은 기름이 너무 많이 나오지도, 너무 적지도 않은 피부입니다. "
+            "따라서 지금 상태를 유지하는 것이 좋습니다. 시중의 화장품 대부분이 "
+            "잘 맞을 것으로 보입니다.\n");
       } else {
         printf("피부 타입 진단 결과는 건성입니다!\n");
         printf(
@@ -131,40 +149,58 @@ int main() {
       DisplayHwaInfo(hwa_save, count);
       printf("-------------------\n");
 
-      printf("1. 화장품 추가\n2. 화장품 수정\n3. 나가기\n");
-      scanf_s("%d", &num);
+      printf("1. 화장품 추가\n2. 화장품 수정\n3. 화장품 삭제\n4. 나가기\n");
+      check = 1;
+      while (check) {
+        scanf_s("%d", &num);
+        check = errordetect(num, 3);
+      }
+
       if (num == 1) {
         if (count < bunho) {
           AddHwaInfo(&hwa_save[count]);  // 포인터
           count++;
         } else {
-          printf("화장품 저장소가 꽉 찼어요. (최대 20개까지 저장 가능)\n");
+          printf("화장품 저장소가 꽉 찼어요. (최대 30개까지 저장 가능)\n");
         }
 
       } else if (num == 2) {
         int sujeong = 0;
-        printf("수정할 화장품 번호를 입력하세요.");
-        scanf_s("%d", &sujeong);
-        if (sujeong <= count) {
-          ChangeHwaInfo(&hwa_save[count]);
+        if (count == 0) {
+          printf("화장품 저장소에 화장품이 없어요. \n");
         } else {
-          printf("수정할 화장품 번호가 잘못되었습니다.");
+          printf("수정할 화장품 번호: ");
+          check = 1;
+          while (check) {
+            scanf_s("%d", &sujeong);
+            errordetect(sujeong, count);
+          }
+
+          ChangeHwaInfo(&hwa_save[sujeong - 1]);
         }
 
-
       } else if (num == 3) {
+        int delete = 0;
+        printf("삭제할 화장품 번호: ");
+        check = 1;
+        while (check) {
+          scanf_s("%d", &delete);
+          errordetect(delete, count);
+        }
+        SubHwaInfo(hwa_save, count, delete -1);
+        count = count - 1;
+      } else {
       }
     } else if (choice == 3) {
       int num = 0;
-      char* fileName = "./hwa_diary.txt";  // 일기 저장 txt
-      FILE* file;
+      char temp[MAX];
       fopen_s(&file, fileName, "a+");
       if (file == NULL) {
         printf("실패\n");
         return 1;
       }
       printf(
-          "1. 피부 일기 쓰기\n2. 피부 일기 수정\n3. 피부 "
+          "1. 피부 일기 쓰기\n2. 피부 일기 삭제\n3. 피부 "
           "일기 보기\n");
       scanf_s("%d", &num);
       if (num == 1) {
@@ -193,16 +229,7 @@ int main() {
         fclose(file);
 
       } else if (num == 2) {
-        int num = 0;
-        printf("1. 날짜수정\n2. 일기내용수정\n");
-        scanf_s("%d", &num);
-        if (num == 1) {
-          printf("잘못 쓴 날짜를 입력하세요.");
-          // scanf_s("")
-        } else if (num == 2) {
-        }
       } else if (num == 3) {
-        char temp[MAX];
         while (1) {
           char* result = fgets(temp, MAX, file);
           if (result == NULL) {
@@ -253,13 +280,38 @@ int main() {
                                                                        // ㄱ
       }
     } else if (choice == 6) {
-      // 설정(약 먹는거)
-    } else if (choice == 7) {
-      printf("프로그램을 종료합니다.\n");
-      Freemalloc(hwa_save, count);
-      return;
-    } else {
-      printf("잘못된 입력입니다. 1~7번 사이의 번호를 입력해주세요\n");
+      MedCheck = MedCalculator();
+    }
+
+    else if (MedCheck != 2) {
+      if (choice == 7) {
+        printf("프로그램을 종료합니다.\n");
+        Freemalloc(hwa_save, count);
+        return 0;
+      } else {
+        errordetect(choice, 7);
+      }
+
+    } else if (MedCheck == 2) {
+      if (choice = 7) {
+        day += 2;  // 간격 이틀로 (고려할 거: 31 30 처럼 날짜 반복.. 배열에 담으면 되려나..?)
+
+        if (day > 31) {
+          day -= 31;  // 1일로 만들기
+          month++;
+          if (month > 12) {
+            month = 1;
+          }
+        }
+      
+      }
+      if (choice == 8) {
+        printf("프로그램을 종료합니다.\n");
+        Freemalloc(hwa_save, count);
+        return 0;
+      } else {
+        errordetect(choice, 8);
+      }
     }
   }
 }
@@ -279,7 +331,7 @@ void AddHwaInfo(struct HwaInfo* hwa) {
   printf("별점을 입력하세요(5점 만점): ");
   scanf_s("%f", &hwa->star);
 
-  printf("한줄평을 입력하세요: ");
+  printf("메모를 입력하세요(띄어쓰기 없이 입력): ");
   scanf_s("%s", temp, (int)sizeof(temp));
   hwa->write = (char*)malloc((strlen(temp) + 1) * sizeof(char));
   strcpy_s(hwa->write, strlen(temp) + 1, temp);
@@ -293,12 +345,50 @@ void DisplayHwaInfo(const struct HwaInfo* hwa, int count) {
     printf("%s\n", hwa[i].write);  // 한줄평 출력
   }
 }
-void ChangeHwaInfo(struct HwaInfo* hwa)
-{
+void ChangeHwaInfo(struct HwaInfo* hwa) {
+  int num = 0;
+  printf("수정할 항목을 선택하세요.\n");
+  printf("1. 화장품 브랜드 2.화장품 이름 3.별점 4. 메모\n");
+  scanf_s("%d", &num);
+  char temp[300];
+  if (num == 1) {
+    printf("화장품 브랜드를 입력하세요.(띄어쓰기 없이 입력): ");
+    scanf_s("%s", temp, (int)sizeof(temp));
+    hwa->brandname = (char*)malloc((strlen(temp) + 1) * sizeof(char));
+    strcpy_s(hwa->brandname, strlen(temp) + 1, temp);
+  }
+  if (num == 2) {
+    printf("화장품 이름을 입력하세요.(띄어쓰기 없이 입력): ");
+    scanf_s("%s", temp, (int)sizeof(temp));
+    hwa->name = (char*)malloc((strlen(temp) + 1) * sizeof(char));
+    strcpy_s(hwa->name, strlen(temp) + 1, temp);
+  }
+  if (num == 3) {
+    printf("별점을 입력하세요(5점 만점): ");
+    scanf_s("%f", &hwa->star);
+  }
+  if (num == 4) {
+    printf("메모를 입력하세요(띄어쓰기 없이 입력): ");
+    scanf_s("%s", temp, (int)sizeof(temp));
+    hwa->write = (char*)malloc((strlen(temp) + 1) * sizeof(char));
+    strcpy_s(hwa->write, strlen(temp) + 1, temp);
+  }
+}
 
+void SubHwaInfo(struct HwaInfo* hwa, int count, int delete) {
+  printf("%s | %s 화장품을 삭제할게요.\n", hwa[delete].brandname,
+         hwa[delete].name);
 
+  free(hwa[delete].brandname);
+  free(hwa[delete].name);
+  free(hwa[delete].write);
 
-
+  for (int i = delete; i < count; i++) {
+    hwa[i] = hwa[i + 1];
+  }
+  hwa[count - 1].brandname = NULL;
+  hwa[count - 1].name = NULL;
+  hwa[count - 1].write = NULL;  // 맨 마지막 칸 없애기
 }
 
 void Freemalloc(struct HwaInfo* hwa, int count) {
@@ -308,4 +398,47 @@ void Freemalloc(struct HwaInfo* hwa, int count) {
     free(hwa[i].write);
   }
 }
-// 할 일: 파일 3개 이상 만들기!!!!!!!! 함수화 시키기
+
+
+
+int MedCalculator() {
+  char one = ' ';
+  printf(
+      "여드름약을 먹거나 바르고 계신가요? 맞다면 y를, 틀리면 n을 입력해주세요. "
+      "이 정보는 약 알리미 기능에 사용됩니다!\n"); 
+  scanf_s(" %c", &one, 1);
+  getchar();
+  if (one == 'y' || one == 'Y') {
+    int med;
+    printf("약 먹는(바르는) 주기가 어떻게 되나요?\n1. 매일 2. 이틀 3. 기타\n");
+    scanf_s("%d", &med);
+    printf("답변 감사합니다 :)\n");
+    if (med == 1) {
+      MedCheck = 1;
+    } else if (med == 2) {
+      printf("날짜 정보를 수집할게요!\n");
+      printf("오늘 월을 입력하세요: ");
+      scanf_s("%d", &month);
+      printf("일을 입력하세요: ");
+      scanf_s("%d", &day);
+      MedCheck = 2;
+      printf(
+          "앞으로 약을 먹었다면 eat 메뉴 번호인 7번을 입력해주세요! 약 알리미에 날짜 계산이 실시간 "
+          "반영되게 됩니다.\n");
+    } else if (med == 3) {
+      printf(
+          "매일, 이틀 외는 알림기능을 지원하고 "
+          "있지 않습니다.\n");
+      MedCheck = 0;
+    } else {
+      printf("잘못된 입력입니다.");
+    }
+  }
+  else {
+      MedCheck = 0;
+    }
+  
+  return MedCheck;
+
+}
+    // 할 일: 파일 3개 이상 만들기!!!!!!!! 함수화 시키기
