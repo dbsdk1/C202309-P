@@ -4,6 +4,7 @@
 #define yeol 100
 #define bunho 30
 #define MAX 10000
+#define bunho2 3
 
 char save[bunho][yeol] = {""};
 int type[5];
@@ -11,9 +12,11 @@ int count = 0;
 char line[MAX];          // 일기용
 char content[MAX] = "";  // 일기용
 int check = 1;
-int MedCheck=0;
+int MedCheck = 0;
 int month, day;
-
+int MonthDay[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+char SkinType[10];
+char temp[MAX];
 
 struct HwaInfo {
   char* brandname;
@@ -31,7 +34,6 @@ void Freemalloc(struct HwaInfo* hwa, int count);
 void SubHwaInfo(struct HwaInfo* hwa, int count, int delete);
 int MedCalculator();
 
-
 int errordetect(int user_num, int limit_num) {
   if (user_num > limit_num || user_num <= 0) {
     check = 1;
@@ -44,13 +46,12 @@ int errordetect(int user_num, int limit_num) {
 }
 
 int main() {
- 
   char* fileName = "./hwa_diary.txt";  // 일기 저장 txt
   FILE* file;
   printf("피부관리 프로그램 ver1.0 \n");
   printf("초기 설정 단계입니다!\n");
   int MedCheck = MedCalculator();
-  
+
   while (1) {
     int choice = 0;
 
@@ -61,17 +62,15 @@ int main() {
         "올리브영 바로가기\n5. 여드름 관련 정보 모음zip\n");
     printf("6. 약 설정\n");
     if (MedCheck == 2) {
-      printf("7. eat\n8. 프로그램 종료\n");
+      printf("7. eat & splash\n8. 프로그램 종료\n");
     } else {
       printf("7. 프로그램 종료\n");
     }
     if (MedCheck == 1) {
-      printf("*오늘은 약 먹는 날이 맞습니다*\n");
+      printf("*오늘은 약 먹는(바르는) 날이 맞습니다*\n");
     } else if (MedCheck == 2) {
-      
-        
-
-      printf("*약을 먹어야 하는 다음 날짜는 %d월 %d일입니다.*\n", month, day);
+      printf("*약을 먹어야(발라야) 하는 다음 날짜는 %d월 %d일입니다.*\n", month,
+             day);
     }
 
     printf("--------------------------\n");
@@ -129,18 +128,21 @@ int main() {
             "지성은 일반적으로 유분(기름)이 많은 피부입니다. 꾸덕하거나 잘 "
             "흡수되지 않는 무거운 기초화장품을 사용하면 여드름이 더 심해지니 "
             "주의하세요! 또한 기름종이 사용을 추천합니다.\n");
+        strcpy_s(SkinType, (int)sizeof(SkinType), "지성");
       } else if (sum <= 8) {
         printf("피부 타입 진단 결과는 중성(복합성)입니다!\n");
         printf(
             "중성은 기름이 너무 많이 나오지도, 너무 적지도 않은 피부입니다. "
             "따라서 지금 상태를 유지하는 것이 좋습니다. 시중의 화장품 대부분이 "
             "잘 맞을 것으로 보입니다.\n");
+        strcpy_s(SkinType, (int)sizeof(SkinType), "복합성");
       } else {
         printf("피부 타입 진단 결과는 건성입니다!\n");
         printf(
             "건성은 얼굴에 기름이 별로 나오지 않는 피부입니다. 그렇기에 보습을 "
             "잘 해주는 것이 중요합니다. 피부가 건조해지지 않도록 꼭 "
             "기초화장품을 발라주세요.\n");
+        strcpy_s(SkinType, (int)sizeof(SkinType), "건성");
       }
 
     } else if (choice == 2) {
@@ -149,11 +151,13 @@ int main() {
       DisplayHwaInfo(hwa_save, count);
       printf("-------------------\n");
 
-      printf("1. 화장품 추가\n2. 화장품 수정\n3. 화장품 삭제\n4. 나가기\n");
+      printf(
+          "1. 화장품 추가\n2. 화장품 수정\n3. 화장품 삭제\n4. 화장품 "
+          "추천(BETA)\n5. 나가기\n");
       check = 1;
       while (check) {
         scanf_s("%d", &num);
-        check = errordetect(num, 3);
+        check = errordetect(num, 5);
       }
 
       if (num == 1) {
@@ -189,11 +193,96 @@ int main() {
         }
         SubHwaInfo(hwa_save, count, delete -1);
         count = count - 1;
-      } else {
-      }
+      } else if (num == 4) {
+        char one;
+        char component[15];
+        printf("기초 화장품 추천 탭입니다!\n");
+        printf(
+            "화장품 저장소에서 맞지 않았던 화장품 성분이 있다면 y를 없으면 n를 "
+            "입력해주세요.\n");
+        scanf_s(" %c", &one, 1);
+        getchar();
+        if (one == 'y' || one == 'Y') {
+          printf("맞지 않았던 성분 한가지를 입력해주세요: ");
+          scanf_s("%s", component, (int)sizeof(component));
+
+          if (strcmp(component, "티트리") == 0) {
+            char* fileName2 = "./best_hwa_byeongful.txt";
+            FILE* file3;
+
+            printf("%s 성분 대신 [병풀] 성분의 화장품을 추천드립니다\n",
+                   component);
+            fopen_s(&file3, fileName2, "w");
+            fputs(
+                "1. 라운드랩 소나무 진정 앰플\n2. 토리든 밸런스풀 병풀 진정 "
+                "크림\n",
+                file3);
+            fclose(file3);
+            fopen_s(&file3, fileName2, "r");
+
+            while (1) {
+              char* result = fgets(temp, MAX, file3);
+              if (result == NULL) {
+                break;
+              }
+              printf("%s", temp);
+            }
+            fclose(file3);
+          } else if (strcmp(component, "병풀") == 0) {
+            FILE* file2;
+            fopen_s(&file2, "./best_hwa_teetree.txt", "w");
+            if (file2 != NULL) {
+              printf("%s 성분 대신 [티트리] 성분의 화장품을 추천드립니다\n",
+                     component);
+              fputs(
+                  "1. 메디힐 티트리 진정 수분 앰플\n2. 린제이 모델링마스크 "
+                  "쿨티트리\n3. 브링그린 티트리수딩토너\n4. 파파레서피 "
+                  "티트리 "
+                  "수딩 크림\n",
+                  file2);
+              fclose(file2);
+              fopen_s(&file2, "./best_hwa_teetree.txt", "r");
+
+              while (1) {
+                char* result = fgets(temp, MAX, file2);
+                if (result == NULL) {
+                  break;
+                }
+                printf("%s", temp);
+              }
+              fclose(file2);
+            }
+          } else {
+            printf(
+                "성분이 추천 데이터베이스에 존재하지 않습니다. 그 대신 "
+                "피부타입에 따른 화장품을 추천해드릴게요!\n");
+
+            if (strcmp(SkinType, "지성")) {
+            } else if (strcmp(SkinType, "복합성")) {
+            } else if (strcmp(SkinType, "건성")) {
+            } else {
+              printf("먼저 피부타입 검사를 하시면 화장품을 추천드려요.\n");
+            }
+          }
+
+        } else {
+          printf(
+              "그렇다면 피부타입에 따른 화장품을 추천해드릴게요!\n");
+          if (SkinType == NULL) {
+            printf("먼저 피부타입 검사를 하시면 화장품을 추천드려요.\n");
+          } else {
+            if (SkinType == "지성") {
+            } else if (SkinType == "복합성") {
+            } else {
+            }
+          }
+        }
+
+      } 
+
     } else if (choice == 3) {
       int num = 0;
-      char temp[MAX];
+
       fopen_s(&file, fileName, "a+");
       if (file == NULL) {
         printf("실패\n");
@@ -294,16 +383,16 @@ int main() {
 
     } else if (MedCheck == 2) {
       if (choice = 7) {
-        day += 2;  // 간격 이틀로 (고려할 거: 31 30 처럼 날짜 반복.. 배열에 담으면 되려나..?)
+        day += 2;
 
-        if (day > 31) {
-          day -= 31;  // 1일로 만들기
+        int EndDay = MonthDay[month - 1];
+        if (day > EndDay) {
+          day -= EndDay;  // 1일로 만들기
           month++;
           if (month > 12) {
             month = 1;
           }
         }
-      
       }
       if (choice == 8) {
         printf("프로그램을 종료합니다.\n");
@@ -388,7 +477,7 @@ void SubHwaInfo(struct HwaInfo* hwa, int count, int delete) {
   }
   hwa[count - 1].brandname = NULL;
   hwa[count - 1].name = NULL;
-  hwa[count - 1].write = NULL;  // 맨 마지막 칸 없애기
+  hwa[count - 1].write = NULL;
 }
 
 void Freemalloc(struct HwaInfo* hwa, int count) {
@@ -399,13 +488,11 @@ void Freemalloc(struct HwaInfo* hwa, int count) {
   }
 }
 
-
-
 int MedCalculator() {
   char one = ' ';
   printf(
       "여드름약을 먹거나 바르고 계신가요? 맞다면 y를, 틀리면 n을 입력해주세요. "
-      "이 정보는 약 알리미 기능에 사용됩니다!\n"); 
+      "이 정보는 약 알리미 기능에 사용됩니다!\n");
   scanf_s(" %c", &one, 1);
   getchar();
   if (one == 'y' || one == 'Y') {
@@ -423,7 +510,8 @@ int MedCalculator() {
       scanf_s("%d", &day);
       MedCheck = 2;
       printf(
-          "앞으로 약을 먹었다면 eat 메뉴 번호인 7번을 입력해주세요! 약 알리미에 날짜 계산이 실시간 "
+          "앞으로 약을 먹거나 발랐다면 메뉴 번호인 7번을 입력해주세요! 약 "
+          "알리미에 날짜 계산이 실시간 "
           "반영되게 됩니다.\n");
     } else if (med == 3) {
       printf(
@@ -433,12 +521,9 @@ int MedCalculator() {
     } else {
       printf("잘못된 입력입니다.");
     }
+  } else {
+    MedCheck = 0;
   }
-  else {
-      MedCheck = 0;
-    }
-  
-  return MedCheck;
 
+  return MedCheck;
 }
-    // 할 일: 파일 3개 이상 만들기!!!!!!!! 함수화 시키기
