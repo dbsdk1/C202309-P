@@ -4,6 +4,18 @@
 #include <stdlib.h>
 #include <string.h>
 
+int ErrorDetect(int user_num, int limit_num) {
+  int check=1;
+  if (user_num > limit_num || user_num <= 0) {
+    check = 1;
+    printf("잘못된 입력입니다. 1~%d 사이의 숫자를 입력해주세요!\n", limit_num);
+    // 조건파악
+  } else {
+    check = 0;
+  }
+  return check;
+}
+
 void AddHwaInfo(struct HwaInfo* hwa) {
   printf("화장품 브랜드를 입력하세요.(띄어쓰기 없이 입력): ");
   char temp[300];

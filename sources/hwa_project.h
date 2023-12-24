@@ -14,4 +14,4 @@ void SubHwaInfo(struct HwaInfo* hwa, int count, int delete);
 void Freemalloc(struct HwaInfo* hwa, int count);
 void MedCalculator(int* MedCheck, int* month, int* day);
 void SkinTypeHwa(char* SkinType);
-
+int ErrorDetect(int user_num, int limit_num);

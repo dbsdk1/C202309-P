@@ -20,16 +20,7 @@ char temp[MAX];
 
 struct HwaInfo hwa_save[BUNHO];
 
-int errordetect(int user_num, int limit_num) {
-  if (user_num > limit_num || user_num <= 0) {
-    check = 1;
-    printf("잘못된 입력입니다. 1~%d 사이의 숫자를 입력해주세요!\n", limit_num);
-    // 조건파악
-  } else {
-    check = 0;
-  }
-  return check;
-}
+
 
 int main() {
   char* fileName = "./hwa_diary.txt";  // 일기 저장 txt
@@ -74,14 +65,14 @@ int main() {
             "않다. 2. 세수하고 아무것도 안바른다면 얼굴이 건조하고 당기는 "
             "편이다.\n");
         scanf_s("%d", &type[0]);
-        check = errordetect(*(type + 0), 2);
+        check = ErrorDetect(*(type + 0), 2);
       } while (check);
       do {
         printf(
             "1. 오후가 되면 얼굴에 기름이 뜨고 반짝거린다. 2. 오후가 되어도 "
             "아침과 피부상태가 똑같거나 기름이 거의 없다.\n");
         scanf_s("%d", &type[1]);
-        check = errordetect(*(type + 1), 2);
+        check = ErrorDetect(*(type + 1), 2);
       } while (check);
       do {
         printf(
@@ -89,7 +80,7 @@ int main() {
             "피부가 "
             "다른 계절보다 건조해진다.\n");
         scanf_s("%d", &type[2]);
-        check = errordetect(*(type + 2), 2);
+        check = ErrorDetect(*(type + 2), 2);
       } while (check);
       do {
         printf(
@@ -97,12 +88,12 @@ int main() {
             "썼는데 기름종이가 뽀송하다. (기름종이가 없다면 깨끗한 손으로 "
             "얼굴을 만져보고 묻은 양을 확인해보세요)\n");
         scanf_s("%d", &type[3]);
-        check = errordetect(*(type + 3), 2);
+        check = ErrorDetect(*(type + 3), 2);
       } while (check);
       do {
         printf("1. 여드름이 많이 나있다. 2. 여드름이 없는 편이다.\n");
         scanf_s("%d", &type[4]);
-        check = errordetect(*(type + 4), 2);
+        check = ErrorDetect(*(type + 4), 2);
       } while (check);
 
       for (int i = 0; i < 5; i++) {
@@ -143,7 +134,7 @@ int main() {
       check = 1;
       while (check) {
         scanf_s("%d", &num);
-        check = errordetect(num, 5);
+        check = ErrorDetect(num, 5);
       }
 
       if (num == 1) {
@@ -163,7 +154,7 @@ int main() {
           check = 1;
           while (check) {
             scanf_s("%d", &sujeong);
-            check = errordetect(sujeong, count);
+            check = ErrorDetect(sujeong, count);
           }
           int num = 0;
 
@@ -172,7 +163,7 @@ int main() {
             printf("수정할 항목을 선택하세요.\n");
             printf("1. 화장품 브랜드 2.화장품 이름 3.별점 4. 메모\n");
             scanf_s("%d", &num);
-            check = errordetect(num, 4);
+            check = ErrorDetect(num, 4);
           }
 
           ChangeHwaInfo(&hwa_save[sujeong - 1], num);
@@ -180,14 +171,19 @@ int main() {
 
       } else if (num == 3) {
         int delete = 0;
-        printf("삭제할 화장품 번호: ");
-        check = 1;
-        while (check) {
-          scanf_s("%d", &delete);
-          check = errordetect(delete, count);
+        if (count > 0) {
+          printf("삭제할 화장품 번호: ");
+          check = 1;
+          while (check) {
+            scanf_s("%d", &delete);
+            check = ErrorDetect(delete, count);
+          }
+          SubHwaInfo(hwa_save, count, delete -1);
+          count = count - 1;
+        } else {
+          printf("화장품 저장소에 화장품이 없어요.\n");
         }
-        SubHwaInfo(hwa_save, count, delete -1);
-        count = count - 1;
+        
       } else if (num == 4) {
         char one;
         char component[15];
@@ -272,7 +268,7 @@ int main() {
       check = 1;
       while (check) {
         scanf_s("%d", &num);
-        check = errordetect(num, 2);
+        check = ErrorDetect(num, 2);
       }
       
       if (num == 1) {
@@ -362,7 +358,7 @@ int main() {
         Freemalloc(hwa_save, count);
         return 0;
       } else {
-        errordetect(choice, 8);
+        ErrorDetect(choice, 8);
       }
     } else {
       if (choice == 7) {
@@ -371,7 +367,7 @@ int main() {
         return 0;
 
       } else {
-        errordetect(choice, 7);
+        ErrorDetect(choice, 7);
       }
     }
   }
